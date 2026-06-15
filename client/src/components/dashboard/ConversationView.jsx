@@ -35,7 +35,9 @@ const ConversationView = ({ ticket, onClose }) => {
     const backendUrl = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace('/api', '') : 'http://localhost:5000';
     const newSocket = io(backendUrl);
 
-    newSocket.emit('joinConversation', ticket.visitorId);
+    newSocket.on('connect', () => {
+      newSocket.emit('joinConversation', ticket.visitorId);
+    });
 
     newSocket.on('newMessage', (msg) => {
       setMessages((prev) => [...prev, msg]);

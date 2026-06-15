@@ -26,8 +26,11 @@ export const sendMessage = asyncHandler(async (req, res) => {
   // Fetch business info to get businessName if not in req.user
   let businessName = req.user?.businessName;
   if (!businessName) {
-    const user = await User.findById(businessId);
-    businessName = user?.businessName || 'the business';
+    const user = await User.findById(businessId).catch(() => null);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Business not found' });
+    }
+    businessName = user.businessName || 'the business';
   }
 
   // Find existing chat for the business + visitor or create a new one
@@ -119,7 +122,7 @@ export const sendMessage = asyncHandler(async (req, res) => {
     });
 
     if (io) {
-      io.to(businessId.toString()).emit('newTicket', newTicket);
+      io.to(`business:${businessId.toString()}`).emit('newTicket', newTicket);
     }
   }
 

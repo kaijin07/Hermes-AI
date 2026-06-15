@@ -16,18 +16,15 @@ const OverviewTab = ({ tickets, faqs }) => {
   const [animatedTickets, setAnimatedTickets] = useState(0);
 
   useEffect(() => {
-    let start = animatedTickets;
-    let end = activeTicketsCount;
-
-    if (start === end) return;
-
-    const increment = end > start ? 1 : -1;
-
     const interval = setInterval(() => {
-      start += increment;
-      setAnimatedTickets(start);
+      setAnimatedTickets((current) => {
+        if (current === activeTicketsCount) {
+          clearInterval(interval);
+          return current;
+        }
 
-      if (start === end) clearInterval(interval);
+        return current + (activeTicketsCount > current ? 1 : -1);
+      });
     }, 50);
 
     return () => clearInterval(interval);

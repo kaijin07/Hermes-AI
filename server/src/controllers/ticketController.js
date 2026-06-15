@@ -53,6 +53,8 @@ export const getTickets = asyncHandler(async (req, res) => {
   res.status(200).json({ success: true, data: tickets });
 });
 
+const VALID_STATUSES = ['open', 'in_progress', 'closed'];
+
 /**
  * @desc    Update ticket status
  * @route   PUT /api/tickets/:id
@@ -61,6 +63,13 @@ export const getTickets = asyncHandler(async (req, res) => {
 export const updateTicketStatus = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
+
+  if (!VALID_STATUSES.includes(status)) {
+    return res.status(400).json({
+      success: false,
+      message: `Invalid status. Must be one of: ${VALID_STATUSES.join(', ')}`,
+    });
+  }
 
   const ticket = await Ticket.findOne({ _id: id, businessId: req.user.id });
 
@@ -75,10 +84,6 @@ export const updateTicketStatus = asyncHandler(async (req, res) => {
   // On close: summarize conversation + clean up raw messages
   if (status === 'closed') {
     summarizeAndClean(ticket).catch(() => {});
-  }
-
-  // Regardless of status, reset human takeover flag
-  if (status === 'closed' || status === 'resolved') {
     await Chat.findOneAndUpdate(
       { businessId: ticket.businessId, visitorId: ticket.visitorId },
       { $set: { humanTakeover: false } }

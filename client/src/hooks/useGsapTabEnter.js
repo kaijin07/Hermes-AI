@@ -4,6 +4,7 @@ import gsap from 'gsap';
 /** Entrance animation when a dashboard tab panel mounts */
 export function useGsapTabEnter(vars = {}) {
   const ref = useRef(null);
+  const varsRef = useRef(vars);
 
   useLayoutEffect(() => {
     const el = ref.current;
@@ -15,7 +16,7 @@ export function useGsapTabEnter(vars = {}) {
         y: 20,
         duration: 0.45,
         ease: 'power3.out',
-        ...vars,
+        ...varsRef.current,
       });
     }, el);
 

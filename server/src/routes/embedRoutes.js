@@ -28,13 +28,13 @@ router.get('/script', async (req, res) => {
 
   const script = `
     (function() {
-      const businessId = "${businessId}";
+      const businessId = ${JSON.stringify(businessId)};
       const apiUrl = "${config.apiUrl}";
       
       const script = document.createElement('script');
       script.src = apiUrl + '/widget.js';
       script.setAttribute('data-business-id', businessId);
-      script.setAttribute('data-bot-name', "${botName}");
+      script.setAttribute('data-bot-name', ${JSON.stringify(botName)});
       document.body.appendChild(script);
     })();
   `;

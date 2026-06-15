@@ -10,8 +10,8 @@ const Contact = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const headerReveal = useScrollReveal();
-  const formReveal = useScrollReveal();
+  const { ref: headerRef, isInView: headerIsInView } = useScrollReveal();
+  const { ref: formRef, isInView: formIsInView } = useScrollReveal();
 
   const headerAnimated = useRef(false);
   const formAnimated = useRef(false);
@@ -37,8 +37,8 @@ const Contact = () => {
   };
 
   useEffect(() => {
-    if (!headerReveal.isInView || headerAnimated.current) return;
-    const wrap = headerReveal.ref.current;
+    if (!headerIsInView || headerAnimated.current) return;
+    const wrap = headerRef.current;
     if (!wrap) return;
     headerAnimated.current = true;
     gsap.from(wrap.querySelectorAll(':scope > *'), {
@@ -48,11 +48,11 @@ const Contact = () => {
       stagger: 0.1,
       ease: 'power3.out',
     });
-  }, [headerReveal.isInView]);
+  }, [headerIsInView, headerRef]);
 
   useEffect(() => {
-    if (!formReveal.isInView || formAnimated.current) return;
-    const root = formReveal.ref.current;
+    if (!formIsInView || formAnimated.current) return;
+    const root = formRef.current;
     if (!root) return;
     formAnimated.current = true;
 
@@ -70,7 +70,7 @@ const Contact = () => {
     if (rightPanel) {
       gsap.from(rightPanel, { opacity: 0, y: 50, duration: 0.8, delay: 0.3, ease: 'power3.out' });
     }
-  }, [formReveal.isInView]);
+  }, [formIsInView, formRef]);
 
   useLayoutEffect(() => {
     if (!submitted) return undefined;
@@ -94,7 +94,7 @@ const Contact = () => {
       <div className="absolute bottom-0 left-0 w-[40vw] h-[40vw] bg-accent/5 blur-[120px] rounded-full pointer-events-none -z-10" />
 
       <div className="max-w-6xl mx-auto px-4">
-        <div className="text-center mb-20 space-y-6" ref={headerReveal.ref}>
+        <div className="text-center mb-20 space-y-6" ref={headerRef}>
           <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-tight">
             Let&apos;s{' '}
             <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-accent">Connect</span>
@@ -105,7 +105,7 @@ const Contact = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-start" ref={formReveal.ref}>
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-16 items-start" ref={formRef}>
           <div data-contact-left className="lg:col-span-2 space-y-6">
             {[
               { icon: <Mail size={24} />, title: 'Email Us', desc: 'admin@hermesai.com', sub: 'Response within 24h' },

@@ -11,3 +11,8 @@ export const loginSchema = z.object({
   email: z.string().email('Please include a valid email'),
   password: z.string().min(1, 'Password is required'),
 });
+
+export const googleAuthSchema = z.object({
+  idToken: z.string().min(1, 'ID token is required'),
+  businessName: z.string().max(100).optional(),
+});

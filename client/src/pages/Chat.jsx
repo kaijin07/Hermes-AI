@@ -136,16 +136,16 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col h-screen max-h-screen bg-bg w-full pt-20">
-      <div className="w-full max-w-4xl mx-auto flex flex-col h-full glass rounded-t-lg overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b border-border bg-surface/80 z-10 shrink-0">
+    <div className="flex flex-col h-screen max-h-screen bg-bg w-full pt-32">
+      <div className="w-full max-w-4xl mx-auto flex flex-col h-full glass rounded-t-lg overflow-hidden relative">
+        <div className="flex items-center justify-between p-6 border-b border-border bg-surface/80 shrink-0 relative z-[100]">
           <div className="flex items-center gap-4">
             <button
               type="button"
               onClick={() => navigate('/dashboard')}
-              className="p-2 rounded-full hover:bg-border text-muted hover:text-white transition-all"
+              className="p-2 rounded-full hover:bg-border text-muted hover:text-white transition-all cursor-pointer relative z-[9999]"
             >
-              <ArrowLeft size={20} />
+              <ArrowLeft size={20} className="pointer-events-none" />
             </button>
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-primary/20 rounded-lg flex items-center justify-center text-primary">

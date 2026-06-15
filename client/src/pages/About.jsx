@@ -15,10 +15,10 @@ const About = () => {
   const bgRef = useRef(null);
   const introWrapRef = useRef(null);
 
-  const missionReveal = useScrollReveal({ margin: '-200px' });
-  const visionReveal = useScrollReveal({ margin: '-200px' });
-  const techReveal = useScrollReveal();
-  const teamReveal = useScrollReveal();
+  const { ref: missionRef, isInView: missionIsInView } = useScrollReveal({ margin: '-200px' });
+  const { ref: visionRef, isInView: visionIsInView } = useScrollReveal({ margin: '-200px' });
+  const { ref: techRef, isInView: techIsInView } = useScrollReveal();
+  const { ref: teamRef, isInView: teamIsInView } = useScrollReveal();
 
   const missionDone = useRef(false);
   const visionDone = useRef(false);
@@ -89,24 +89,24 @@ const About = () => {
   }, []);
 
   useEffect(() => {
-    if (!missionReveal.isInView || missionDone.current) return;
-    const block = missionReveal.ref.current?.querySelector('[data-mission-block]');
+    if (!missionIsInView || missionDone.current) return;
+    const block = missionRef.current?.querySelector('[data-mission-block]');
     if (!block) return;
     missionDone.current = true;
     gsap.from(block, { opacity: 0, x: -50, duration: 0.8, ease: 'power3.out' });
-  }, [missionReveal.isInView]);
+  }, [missionIsInView, missionRef]);
 
   useEffect(() => {
-    if (!visionReveal.isInView || visionDone.current) return;
-    const block = visionReveal.ref.current?.querySelector('[data-vision-block]');
+    if (!visionIsInView || visionDone.current) return;
+    const block = visionRef.current?.querySelector('[data-vision-block]');
     if (!block) return;
     visionDone.current = true;
     gsap.from(block, { opacity: 0, x: 50, duration: 0.8, ease: 'power3.out' });
-  }, [visionReveal.isInView]);
+  }, [visionIsInView, visionRef]);
 
   useEffect(() => {
-    if (!techReveal.isInView || techDone.current) return;
-    const grid = techReveal.ref.current?.querySelector('[data-tech-grid]');
+    if (!techIsInView || techDone.current) return;
+    const grid = techRef.current?.querySelector('[data-tech-grid]');
     if (!grid?.children?.length) return;
     techDone.current = true;
     gsap.from(grid.children, {
@@ -116,11 +116,11 @@ const About = () => {
       stagger: 0.15,
       ease: 'power3.out',
     });
-  }, [techReveal.isInView]);
+  }, [techIsInView, techRef]);
 
   useEffect(() => {
-    if (!teamReveal.isInView || teamDone.current) return;
-    const grid = teamReveal.ref.current?.querySelector('[data-team-grid]');
+    if (!teamIsInView || teamDone.current) return;
+    const grid = teamRef.current?.querySelector('[data-team-grid]');
     if (!grid?.children?.length) return;
     teamDone.current = true;
     gsap.from(grid.children, {
@@ -130,7 +130,7 @@ const About = () => {
       stagger: 0.12,
       ease: 'power3.out',
     });
-  }, [teamReveal.isInView]);
+  }, [teamIsInView, teamRef]);
 
   return (
     <div ref={rootRef} className="flex-1 w-full bg-bg pt-32 pb-24 overflow-hidden text-text relative">
@@ -168,7 +168,7 @@ const About = () => {
         </div>
       </section>
 
-      <section className="relative w-full py-40 px-4 z-10" ref={missionReveal.ref}>
+      <section className="relative w-full py-40 px-4 z-10" ref={missionRef}>
         <div className="max-w-6xl mx-auto">
           <div data-mission-block className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div className="space-y-8 order-2 lg:order-1">
@@ -209,7 +209,7 @@ const About = () => {
 
       <section
         className="relative w-full py-40 px-4 z-10 bg-surface/30 border-y border-border/30"
-        ref={visionReveal.ref}
+        ref={visionRef}
       >
         <div className="max-w-6xl mx-auto">
           <div data-vision-block className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
@@ -247,7 +247,7 @@ const About = () => {
         </div>
       </section>
 
-      <section className="relative w-full py-40 px-4 z-10" ref={techReveal.ref}>
+      <section className="relative w-full py-40 px-4 z-10" ref={techRef}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-4xl md:text-5xl font-bold mb-6">Built by Engineers, for Everyone</h2>
@@ -291,7 +291,7 @@ const About = () => {
 
       <section
         className="relative w-full py-24 md:py-32 px-4 z-10 border-t border-border/40 bg-surface/25"
-        ref={teamReveal.ref}
+        ref={teamRef}
       >
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14 md:mb-16 max-w-2xl mx-auto">

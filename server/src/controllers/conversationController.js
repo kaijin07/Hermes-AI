@@ -14,19 +14,22 @@ export const getConversation = asyncHandler(async (req, res) => {
 });
 
 export const sendMessageAgent = asyncHandler(async (req, res) => {
-  const { userId, message, sender } = req.body;
+  const { userId, message } = req.body;
   const businessId = req.user.id;
+
+  if (!userId || !message?.trim()) {
+    return res.status(400).json({ success: false, message: 'userId and message are required' });
+  }
 
   const chat = await Chat.findOne({ businessId, visitorId: userId });
   if (!chat) {
     return res.status(404).json({ success: false, message: 'Conversation not found' });
   }
 
-  const newMessage = { sender: sender || 'agent', text: message };
+  const newMessage = { sender: 'agent', text: message.trim() };
   chat.messages.push(newMessage);
   await chat.save();
 
-  // Emitting the socket event
   const io = req.app.get('io');
   if (io) {
     io.to(userId).emit('newMessage', newMessage);

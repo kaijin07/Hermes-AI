@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
 export const updateBotConfigSchema = z.object({
-  faqs: z.array(z.object({
-    question: z.string(),
-    answer: z.string(),
-  })).optional(),
-  instructions: z.string().optional(),
+  botName: z.string().min(1).max(100).optional(),
+  instructions: z.string().max(5000).optional(),
+  faqs: z.array(
+    z.object({
+      question: z.string().min(1).max(500),
+      answer: z.string().min(1).max(1000),
+    })
+  ).max(20).optional(),
 });

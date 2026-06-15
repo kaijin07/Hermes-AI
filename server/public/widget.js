@@ -128,11 +128,11 @@
   bubble.id = 'hermes-chat-bubble';
   bubble.innerHTML = '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>';
   
-  const window = document.createElement('div');
-  window.id = 'hermes-chat-window';
-  window.innerHTML = `
+  const chatWindow = document.createElement('div');
+  chatWindow.id = 'hermes-chat-window';
+  chatWindow.innerHTML = `
     <div id="hermes-chat-header">
-      <span>${botName}</span>
+      <span id="hermes-bot-name"></span>
       <span id="hermes-chat-close" style="cursor:pointer">&times;</span>
     </div>
     <div id="hermes-chat-messages"></div>
@@ -141,21 +141,26 @@
       <button id="hermes-chat-send">Send</button>
     </div>
   `;
-  
-  container.appendChild(window);
+  chatWindow.querySelector('#hermes-bot-name').textContent = botName;
+
+  container.appendChild(chatWindow);
   container.appendChild(bubble);
   document.body.appendChild(container);
 
   // Visitor ID Logic
   let visitorId = localStorage.getItem('hermes_visitor_id');
   if (!visitorId) {
-    visitorId = 'v-' + Math.random().toString(36).substr(2, 9);
+    // crypto.randomUUID() is only available in secure contexts (HTTPS).
+    // Fall back to a time+random ID for HTTP pages (e.g. local dev).
+    visitorId = (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function')
+      ? crypto.randomUUID()
+      : 'v-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
     localStorage.setItem('hermes_visitor_id', visitorId);
   }
 
   // Toggle Logic
-  bubble.onclick = () => window.classList.toggle('open');
-  document.getElementById('hermes-chat-close').onclick = () => window.classList.remove('open');
+  bubble.onclick = () => chatWindow.classList.toggle('open');
+  document.getElementById('hermes-chat-close').onclick = () => chatWindow.classList.remove('open');
 
   // Chat Logic
   const messagesDiv = document.getElementById('hermes-chat-messages');
@@ -189,8 +194,8 @@
         body: JSON.stringify({ text, businessId, visitorId })
       });
       const result = await response.json();
-      if (result.success) {
-        // Message will be added via socket listener to avoid duplicates
+      if (result.success && result.data?.text) {
+        addMessage(result.data.text, 'bot');
       }
     } catch (err) {
       console.error('Hermes Error:', err);
@@ -218,8 +223,8 @@
       });
 
       socket.on('newMessage', (msg) => {
-        if (msg.sender !== 'user') {
-          addMessage(msg.text, msg.sender === 'agent' ? 'bot' : msg.sender);
+        if (msg.sender === 'agent') {
+          addMessage(msg.text, 'bot');
         }
       });
     }

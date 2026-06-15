@@ -41,13 +41,15 @@ const Dashboard = () => {
       ? import.meta.env.VITE_API_URL.replace('/api', '') 
       : 'http://localhost:5000';
     
-    const socket = io(backendUrl);
+    const socket = io(backendUrl, { withCredentials: true });
 
-    socket.emit('joinConversation', user._id); // Join business room (reusing the same event name for now)
+    socket.on('connect', () => {
+      socket.emit('joinBusinessRoom', user._id);
+    });
 
     socket.on('newTicket', () => {
       toast.success('New ticket received!');
-      fetchTickets(); // Refresh tickets list
+      fetchTickets();
     });
 
     return () => {
